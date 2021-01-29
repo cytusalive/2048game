@@ -22,77 +22,112 @@ class Game:
                          [0, 0, 0, 0],
                          [0, 0, 0, 0]]
 
-    def addtile(self, x, y, value=2):       
-        self.gamedata[y][x] = value
+    def addtile(self):
+        emptyslots = []       
+        for y in range(4):
+            for x in range(4):
+                if self.gamedata[y][x] == 0:
+                    emptyslots.append([x, y])
+        addx, addy = emptyslots[random.randint(0, len(emptyslots)-1)]
+        if random.randint(0, 9) == 9:
+            self.gamedata[addy][addx] = 4
+        else:
+            self.gamedata[addy][addx] = 2
 
     def drawtile(self):
         surface = pygame.Surface((100, 100))
         for y in range(4):
             for x in range(4):
                 if self.gamedata[y][x] != 0:
-                    surface.fill((255, 255-self.gamedata[y][x], 255))    
+                    if self.gamedata[y][x] <= 2048:
+                        surface.fill((255, self.gamedata[y][x]/2048 * 255, 255))
+                    elif self.gamedata[y][x] <= 4096:
+                        surface.fill((255, 255, self.gamedata/4096 * 255))  
                     text = font.render(str(self.gamedata[y][x]), True, textcolor)
                     surface.blit(text, (10, 30))
                     gamearea.blit(surface, (x*100, y*100))
 
     def move_left(self):
+        validmove = False
         for y in range(4):
             space = 0
             for x in range(4):
                 if self.gamedata[y][x] == 0:
                     space += 1
-                    continue
                 else:
                     if space > 0:
                         self.gamedata[y][x-space] = self.gamedata[y][x]
                         self.gamedata[y][x] = 0
+                        validmove = True
+                    if x > 0 and self.gamedata[y][x-1] == self.gamedata[y][x]:
+                        self.gamedata[y][x-1] *= 2
+                        self.gamedata[y][x] = 0
+                        validmove = True
+        if validmove == True:
+            self.addtile()
+             
     def move_right(self):
+        validmove = False
         for y in range(4):
             space = 0
             for x in range(4):
                 x = 3-x
                 if self.gamedata[y][x] == 0:
                     space += 1
-                    continue
                 else:
                     if space > 0:
                         self.gamedata[y][x+space] = self.gamedata[y][x]
                         self.gamedata[y][x] = 0
+                        validmove = True
+                    if x < 3 and self.gamedata[y][x+1] == self.gamedata[y][x]:
+                        self.gamedata[y][x+1] *= 2
+                        self.gamedata[y][x] = 0                        
+                        validmove = True
+        if validmove == True:
+            self.addtile()
+
     def move_up(self):
+        validmove = False
         for x in range(4):
             space = 0
             for y in range(4):
                 if self.gamedata[y][x] == 0:
                     space += 1
-                    continue
                 else:
                     if space > 0:
                         self.gamedata[y-space][x] = self.gamedata[y][x]
                         self.gamedata[y][x] = 0
+                        validmove = True
+                    if y > 0 and self.gamedata[y-1][x] == self.gamedata[y][x]:
+                        self.gamedata[y-1][x] *= 2
+                        self.gamedata[y][x] = 0
+                        validmove = True
+        if validmove == True:
+            self.addtile()
+
     def move_down(self):
+        validmove = False
         for x in range(4):
             space = 0
             for y in range(4):
                 y = 3-y
                 if self.gamedata[y][x] == 0:
                     space += 1
-                    continue
                 else:
                     if space > 0:
                         self.gamedata[y+space][x] = self.gamedata[y][x]
                         self.gamedata[y][x] = 0
-                    
+                        validmove = True
+                    if y < 3 and self.gamedata[y+1][x] == self.gamedata[y][x]:
+                        self.gamedata[y+1][x] *= 2
+                        self.gamedata[y][x] = 0
+                        validmove = True
+        if validmove == True:
+            self.addtile()                   
 
 
 gameplay = Game()
-gameplay.addtile(0, 0, 250)
-gameplay.addtile(3, 1, 120)
-gameplay.addtile(2, 0, 64)
-gameplay.addtile(1, 3, 12)
-gameplay.addtile(0, 1, 8)
-gameplay.addtile(3, 2, 32)
-gameplay.addtile(1, 0, 180)
-gameplay.addtile(3, 0, 2)
+
 
 '''
 class Tile:
@@ -130,7 +165,8 @@ def drawtiles():
                 pygame.draw.rect(gamearea, (200, 50, 50), tile, 0, 10)
 '''
 
-
+gameplay.addtile()
+gameplay.addtile()
 while True:
     screen.fill(bgcolor)
     screen.blit(gamearea, (0, 100))
