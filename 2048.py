@@ -6,8 +6,11 @@ import math
 pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("Arial", 32, True)
+font2 = pygame.font.SysFont("Arial", 24)
 textcolor = (0, 0, 0)
 pygame.display.set_caption("2048")
+gameicon = pygame.image.load("45iki8vkyfc61.png")
+pygame.display.set_icon(gameicon)
 screen = pygame.display.set_mode((400, 500))
 bgcolor = (180, 130, 100)
 screen.fill(bgcolor)
@@ -172,7 +175,7 @@ class resetbutton:
     def __init__(self):
         self.button = pygame.Surface((100, 50))
         self.button.fill((200, 50, 50))
-        self.newgametext = font.render("Restart Game", True, (0, 0, 0))
+        self.newgametext = font2.render("Restart", True, (0, 0, 0))
     
     def drawbutton(self):
         screen.blit(self.button, (300, 50))
