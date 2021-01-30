@@ -29,6 +29,7 @@ class Game:
             for x in range(4):
                 if self.gamedata[y][x] == 0:
                     emptyslots.append([x, y])
+        
         addx, addy = emptyslots[random.randint(0, len(emptyslots)-1)]
         if random.randint(0, 9) == 9:
             self.gamedata[addy][addx] = 4
@@ -41,8 +42,11 @@ class Game:
             for x in range(4):
                 if self.gamedata[y][x] != 0:
                     expon = math.log(self.gamedata[y][x], 2)
-                    surface.fill((125, 255-23*expon, 125))
-
+                    if expon <= 10:
+                        surface.fill((23*expon, 255-23*expon, 23*expon))
+                    else:
+                        expon %= 10
+                        surface.fill((255-23*expon, 255-23*expon, 23*expon))
                     text = font.render(str(self.gamedata[y][x]), True, textcolor)
                     surface.blit(text, (10, 30))
                     gamearea.blit(surface, (x*100, y*100))
