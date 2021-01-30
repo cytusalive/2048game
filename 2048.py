@@ -9,7 +9,7 @@ font = pygame.font.SysFont("Arial", 32, True)
 textcolor = (0, 0, 0)
 pygame.display.set_caption("2048")
 screen = pygame.display.set_mode((400, 500))
-bgcolor = (230, 180, 100)
+bgcolor = (180, 130, 100)
 screen.fill(bgcolor)
 clock = pygame.time.Clock()
 gamearea = pygame.Surface((400, 400))
@@ -22,6 +22,7 @@ class Game:
                          [0, 0, 0, 0],
                          [0, 0, 0, 0],
                          [0, 0, 0, 0]]
+        self.currentscore = 0
 
     def addtile(self):
         emptyslots = []       
@@ -64,6 +65,7 @@ class Game:
                         validmove = True
                     if len(to_move) > 0 and self.gamedata[y][x] == to_move[len(to_move)-1]:
                         to_move[len(to_move)-1] = [to_move[len(to_move)-1]*2]
+                        self.currentscore += to_move[len(to_move)-1][0]
                         self.gamedata[y][x] = 0
                         validmove = True
                     else:
@@ -92,6 +94,7 @@ class Game:
                         validmove = True
                     if len(to_move) > 0 and self.gamedata[y][x] == to_move[len(to_move)-1]:
                         to_move[len(to_move)-1] = [to_move[len(to_move)-1]*2]
+                        self.currentscore += to_move[len(to_move)-1][0]
                         self.gamedata[y][x] = 0
                         validmove = True
                     else:
@@ -120,6 +123,7 @@ class Game:
                         validmove = True
                     if len(to_move) > 0 and self.gamedata[y][x] == to_move[len(to_move)-1]:
                         to_move[len(to_move)-1] = [to_move[len(to_move)-1]*2]
+                        self.currentscore += to_move[len(to_move)-1][0]
                         self.gamedata[y][x] = 0
                         validmove = True
                     else:
@@ -148,6 +152,7 @@ class Game:
                         validmove = True
                     if len(to_move) > 0 and self.gamedata[y][x] == to_move[len(to_move)-1]:
                         to_move[len(to_move)-1] = [to_move[len(to_move)-1]*2]
+                        self.currentscore += to_move[len(to_move)-1][0]
                         self.gamedata[y][x] = 0
                         validmove = True
                     else:
@@ -163,16 +168,40 @@ class Game:
         if validmove:
             self.addtile()
 
+class resetbutton:
+    def __init__(self):
+        self.button = pygame.Surface((100, 50))
+        self.button.fill((200, 50, 50))
+        self.newgametext = font.render("Restart Game", True, (0, 0, 0))
+    
+    def drawbutton(self):
+        screen.blit(self.button, (300, 50))
+        self.button.blit(self.newgametext, (10, 10))
 
+    def resetgame(self):
+        gameplay.gamedata = [[0, 0, 0, 0],
+                             [0, 0, 0, 0],
+                             [0, 0, 0, 0],
+                             [0, 0, 0, 0]]
+        gameplay.currentscore = 0
+        gameplay.addtile()
+        gameplay.addtile() 
+
+reset = resetbutton()
+gametext = font.render("Merge the tiles to reach 2048!", True, (255, 255, 255))
 gameplay = Game()
+gameplay.addtile()
+gameplay.addtile()
 
-gameplay.addtile()
-gameplay.addtile()
 while True:
     screen.fill(bgcolor)
     screen.blit(gamearea, (0, 100))
     gamearea.fill(gacolor)
     gameplay.drawtile()
+    screen.blit(gametext, (10, 10))
+    score = font.render("Current score: {}".format(gameplay.currentscore), True, (255, 255, 255))
+    screen.blit(score, (10, 50))
+    reset.drawbutton()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -186,5 +215,9 @@ while True:
                 gameplay.move_up()
             if event.key == pygame.K_DOWN:
                 gameplay.move_down()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mousex, mousey = pygame.mouse.get_pos()
+            if mousex > 300 and mousey > 50 and mousey < 100:
+                reset.resetgame()
     pygame.display.update()
     clock.tick(30)
